@@ -117,7 +117,7 @@ scan_labels([Line|Lines], PC, [Name=PC|Labels]) :-
     scan_labels(Lines, PC, Labels).
 scan_labels([Line|Lines], PC, Labels) :-
     Line = _Instruction/Mode, !,
-    opcode(_Opcode, Mode, _),
+    % opcode(_Opcode, Mode, _),  % seems redundant
     opcode_size(Mode, Size),
     NewPC #= PC + Size, !,
     scan_labels(Lines, NewPC, Labels).
@@ -128,7 +128,7 @@ scan_labels([_Other|Lines], PC, Labels) :-
 % assemble(Statements, Bytes)
 
 assemble0(Lines, Bytes, PC) :-
-    scan_labels(Lines, PC, Values), !,  % does not disassemble :(
+    scan_labels(Lines, PC, Values), !,  
     assemble(Lines, Bytes, PC, Values).
 
 assemble([], [], _PC, _Values).
