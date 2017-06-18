@@ -133,22 +133,22 @@ assemble0(Lines, Bytes, PC) :-
 
 assemble([], [], _PC, _Values).
 assemble([Name=Value|Lines], Bytes, PC, Values) :-
-    nonvar(Name), !, % don't try to "make up" X=Y terms in the disassemble step
-    assemble(Lines, Bytes, PC, [Name=Value|Values]).
+    nonvar(Name),  % don't try to "make up" X=Y terms in the disassemble step
+    assemble(Lines, Bytes, PC, [Name=Value|Values]), !.
 assemble([label(Name)|Lines], Bytes, PC, Values) :-
     % label has already been set by pre-scan, so this is a no-op
     nonvar(Name), % only matches when assembling, not disassembling
-    assemble(Lines, Bytes, PC, Values).
+    assemble(Lines, Bytes, PC, Values), !.
 assemble([Line|Lines], [B|Bytes], PC, Values) :-
     assemble_line(Line, [B], PC, Values),
     %display_assemble_status(Line, [B], PC),
     NewPC #= PC + 1,
-    assemble(Lines, Bytes, NewPC, Values).
+    assemble(Lines, Bytes, NewPC, Values), !.
 assemble([Line|Lines], [B1,B2|Bytes], PC, Values) :-
     assemble_line(Line, [B1,B2], PC, Values),
     %display_assemble_status(Line, [B1,B2], PC),
     NewPC #= PC + 2,
-    assemble(Lines, Bytes, NewPC, Values).
+    assemble(Lines, Bytes, NewPC, Values), !.
 assemble([Line|Lines], [B1,B2,B3|Bytes], PC, Values) :-
     assemble_line(Line, [B1,B2,B3], PC, Values),
     %display_assemble_status(Line, [B1,B2,B3], PC),
