@@ -24,16 +24,6 @@ test(assemble_line_lda, []) :-
     assemble_line(Instruction/Mode, [0xA9, 66], 0xC000, []),
     assertion(Instruction/Mode = lda(66)/immediate).
 
-/*
-try_lda_immediate_with_value :-
-    % assemble
-    assemble_line(lda(letter_c)/immediate, Bytes, 0xC000, [letter_c=67]),
-    write_hex_bytes(Bytes),
-    % disassemble
-    assemble_line(Instruction/Mode, [0xA9, 67], 0xC000, []),
-    format("~w ~w~n", [Instruction, Mode]).
-*/
-
 % assemble lda/immediate with value
 
 test(assemble_line_lda) :-
@@ -45,6 +35,22 @@ test(assemble_line_lda) :-
 test(assemble_line_lda) :-
     assemble_line(Instruction/Mode, [0xA9, 67], 0xC000, [letter_c=67]),
     assertion(Instruction/Mode = lda(67)/immediate).
+
+% dis/assemble jsr
+
+test(assemble_line_jsr) :-
+    assemble_line(jsr(0xC000)/absolute, Bytes, 0xC000, []),
+    assertion(Bytes = [0x20, 0x00, 0xC0]).
+
+test(assemble_line_jsr) :-
+    assemble_line(Instruction/Mode, [0x20, 0x00, 0xC0], 0xC000, []),
+    assertion(Instruction/Mode = jsr(0xC000)/absolute).
+
+% assemble jsr with value
+
+test(assemble_line_jsr) :-
+    assemble_line(jsr(chrout)/absolute, Bytes, 0xC000, [chrout=0xFFD2]),
+    assertion(Bytes = [0x20, 0xD2, 0xFF]).
 
 :- end_tests(assemble_line).
 

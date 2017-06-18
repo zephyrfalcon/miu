@@ -195,46 +195,6 @@ write_hex_bytes([B|Bs]) :-
 %
 % test test...
 
-try_rts :-
-    % assemble
-    assemble_line(rts/implied, Bytes, 0xC000, []),
-    write_hex_bytes(Bytes),
-    % disassemble!
-    assemble_line(Instruction/Mode, [0x60], 0xC000, []),
-    format("~w ~w~n", [Instruction, Mode]).
-
-try_lda_immediate :-
-    % assemble
-    assemble_line(lda(66)/immediate, Bytes, 0xC000, []),
-    write_hex_bytes(Bytes),
-    % disassemble
-    assemble_line(Instruction/Mode, [0xA9, 66], 0xC000, []),
-    format("~w ~w~n", [Instruction, Mode]).
-
-try_lda_immediate_with_value :-
-    % assemble
-    assemble_line(lda(letter_c)/immediate, Bytes, 0xC000, [letter_c=67]),
-    write_hex_bytes(Bytes),
-    % disassemble
-    assemble_line(Instruction/Mode, [0xA9, 67], 0xC000, []),
-    format("~w ~w~n", [Instruction, Mode]).
-
-try_jsr :-
-    % assemble
-    assemble_line(jsr(0xC000)/absolute, Bytes, 0xC000, []),
-    write_hex_bytes(Bytes),
-    % disassemble
-    assemble_line(Instruction/Mode, [0x20, 0x00, 0xC0], 0xC000, []),
-    format("~w ~w~n", [Instruction, Mode]).
-
-try_jsr_with_value :-
-    % assemble
-    assemble_line(jsr(chrout)/absolute, Bytes, 0xC000, [chrout=0xFFD2]),
-    write_hex_bytes(Bytes),
-    % disassemble
-    assemble_line(Instruction/Mode, [0x20, 0xD2, 0xFF], 0xC000, []),
-    format("~w ~w~n", [Instruction, Mode]).
-
 try_all :-
     writeln("-- try_all"),
     writeln("assembling:"),
@@ -282,11 +242,6 @@ try_branching :-
     write_term(Lines, [nl(true), spacing(next_argument)]).
 
 go :-
-    try_rts,
-    try_lda_immediate,
-    try_lda_immediate_with_value,
-    try_jsr,
-    try_jsr_with_value,
     try_all,
     try_labels_scan_forward,
     try_branching.
