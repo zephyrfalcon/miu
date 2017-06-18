@@ -113,7 +113,7 @@ scan_labels(Lines, _PC, []) :-
 scan_labels([], _StartAddress, []).
 scan_labels([Line|Lines], PC, [Name=PC|Labels]) :-
     Line = label(Name), !,
-    format("label ~w set to ~16R~n", [Name, PC]),
+    % format("label ~w set to ~16R~n", [Name, PC]),
     scan_labels(Lines, PC, Labels).
 scan_labels([Line|Lines], PC, Labels) :-
     Line = _Instruction/Mode, !,
@@ -141,17 +141,17 @@ assemble([label(Name)|Lines], Bytes, PC, Values) :-
     assemble(Lines, Bytes, PC, Values).
 assemble([Line|Lines], [B|Bytes], PC, Values) :-
     assemble_line(Line, [B], PC, Values),
-    display_assemble_status(Line, [B], PC),
+    %display_assemble_status(Line, [B], PC),
     NewPC #= PC + 1,
     assemble(Lines, Bytes, NewPC, Values).
 assemble([Line|Lines], [B1,B2|Bytes], PC, Values) :-
     assemble_line(Line, [B1,B2], PC, Values),
-    display_assemble_status(Line, [B1,B2], PC),
+    %display_assemble_status(Line, [B1,B2], PC),
     NewPC #= PC + 2,
     assemble(Lines, Bytes, NewPC, Values).
 assemble([Line|Lines], [B1,B2,B3|Bytes], PC, Values) :-
     assemble_line(Line, [B1,B2,B3], PC, Values),
-    display_assemble_status(Line, [B1,B2,B3], PC),
+    %display_assemble_status(Line, [B1,B2,B3], PC),
     NewPC #= PC + 3,
     assemble(Lines, Bytes, NewPC, Values).
 
@@ -195,21 +195,6 @@ write_hex_bytes([B|Bs]) :-
 %
 % test test...
 
-try_all :-
-    writeln("-- try_all"),
-    writeln("assembling:"),
-    assemble0([
-        letter_c = 67,
-        lda(67)/immediate,
-        jsr(0xC000)/absolute,
-        label(the_end),
-        rts/implied
-    ], Bytes, 0xC000),
-    write_hex_bytes(Bytes),
-    writeln("disassembling:"),
-    assemble0(Lines, [0xA9, 0x43, 0x20, 0x0, 0xC0, 0x60], 0xC000),
-    write_term(Lines, [nl(true), spacing(next_argument)]).
-
 try_labels_scan_forward :-
     writeln("-- try_labels_scan_forward"),
     writeln("assembling:"),
@@ -242,7 +227,6 @@ try_branching :-
     write_term(Lines, [nl(true), spacing(next_argument)]).
 
 go :-
-    try_all,
     try_labels_scan_forward,
     try_branching.
 

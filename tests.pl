@@ -54,5 +54,27 @@ test(assemble_line_jsr) :-
 
 :- end_tests(assemble_line).
 
+:- begin_tests(assemble0).
+
+program1([0xA9, 0x43, 0x20, 0x00, 0xC0, 0x60]).
+
+test(assemble0) :-
+    program1(Code),
+    assemble0([
+        letter_c = 67,
+        lda(67)/immediate,
+        jsr(0xC000)/absolute,
+        label(the_end),
+        rts/implied
+    ], Bytes, 0xC000),
+    assertion(Bytes = Code).
+
+test(assemble0) :-
+    program1(Code),
+    assemble0(Lines, Code, 0xC000), 
+    assertion(Bytes = Code).
+
+:- end_tests(assemble0).
+
 go :-
     run_tests.
