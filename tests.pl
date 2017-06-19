@@ -74,21 +74,6 @@ test(assemble0) :-
     assemble0(Lines, Code, 0xC000), 
     assertion(Lines = [lda(67)/immediate, jsr(0xC000)/absolute, rts/implied]).
 
-/*
-try_labels_scan_forward :-
-    writeln("-- try_labels_scan_forward"),
-    writeln("assembling:"),
-    assemble0([
-        jsr(the_end)/absolute,
-        label(the_end),
-        rts/implied
-    ], Bytes, 0xC000),
-    write_hex_bytes(Bytes),
-    writeln("disassembling:"),
-    assemble0(Lines, Bytes, 0xC000),
-    write_term(Lines, [nl(true), spacing(next_argument)]).
-*/
-
 test(labels_scan_forward) :-
     assemble0([
         jsr(the_end)/absolute,
@@ -100,6 +85,24 @@ test(labels_scan_forward) :-
 test(labels_scan_forward) :-
     assemble0(Lines, [0x20, 0x03, 0xC0, 0x60], 0xC000),
     assertion(Lines = [jsr(0xC003/absolute, rts/implied]).
+
+test(branching) :-
+    assemble0([
+        label(here),                % here = C000
+        nop/implied,                % C000
+        nop/implied,                % C001
+        bne(here)/relative,         % C002; jump to C000-(C002+2) = -4 = 0xFC
+        rts/implied,                % C004
+        bne(there)/relative,        % C005; jump to C008-(C005+2) = 1 = 0x01
+        nop/implied,                % C007
+        label(there)                % there = C008
+    ], Bytes, 0xC000),
+    assertion(Bytes = [0xEA, 0xEA, 0xD0, 0xFC, 0x60, 0xD0, 0x01, 0xEA]).
+
+test(branching) :-
+    assemble0(Lines, [0xEA, 0xEA, 0xD0, 0xFC, 0x60, 0xD0, 0x01, 0xEA], 0xC000),
+    assertion(Lines = [nop/implied, nop/implied, bne(0xC000)/relative,
+                       rts/implied, bne(0xC008)/relative, nop/implied]).
 
 :- end_tests(assemble0).
 

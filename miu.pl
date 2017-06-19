@@ -192,28 +192,7 @@ write_hex_bytes([B|Bs]) :-
     format("~|~`0t~16R~2+ ", [B]),  % don't ask...
     write_hex_bytes(Bs).
 
-%
-% test test...
-
-try_branching :-
-    writeln("-- try_branching"),
-    writeln("assembling:"),
-    assemble0([
-        label(here),                % here = C000
-        nop/implied,                % C000
-        nop/implied,                % C001
-        bne(here)/relative,         % C002; jump to C000-(C002+2) = -4 = 0xFC
-        rts/implied,                % C004
-        bne(there)/relative,        % C005; jump to C008-(C005+2) = 1 = 0x01
-        nop/implied,                % C007
-        label(there)                % there = C008
-    ], Bytes, 0xC000),
-    write_hex_bytes(Bytes),
-    writeln("disassembling:"),
-    assemble0(Lines, Bytes, 0xC000),
-    write_term(Lines, [nl(true), spacing(next_argument)]).
-
 go :-
-    try_labels_scan_forward,
-    try_branching.
+    true.
+    % a "real" main program will be added shortly... >.>
 
