@@ -195,19 +195,6 @@ write_hex_bytes([B|Bs]) :-
 %
 % test test...
 
-try_labels_scan_forward :-
-    writeln("-- try_labels_scan_forward"),
-    writeln("assembling:"),
-    assemble0([
-        jsr(the_end)/absolute,
-        label(the_end),
-        rts/implied
-    ], Bytes, 0xC000),
-    write_hex_bytes(Bytes),
-    writeln("disassembling:"),
-    assemble0(Lines, Bytes, 0xC000),
-    write_term(Lines, [nl(true), spacing(next_argument)]).
-
 try_branching :-
     writeln("-- try_branching"),
     writeln("assembling:"),

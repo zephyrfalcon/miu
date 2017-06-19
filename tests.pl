@@ -72,7 +72,34 @@ test(assemble0) :-
 test(assemble0) :-
     program1(Code),
     assemble0(Lines, Code, 0xC000), 
-    assertion(Bytes = Code).
+    assertion(Lines = [lda(67)/immediate, jsr(0xC000)/absolute, rts/implied]).
+
+/*
+try_labels_scan_forward :-
+    writeln("-- try_labels_scan_forward"),
+    writeln("assembling:"),
+    assemble0([
+        jsr(the_end)/absolute,
+        label(the_end),
+        rts/implied
+    ], Bytes, 0xC000),
+    write_hex_bytes(Bytes),
+    writeln("disassembling:"),
+    assemble0(Lines, Bytes, 0xC000),
+    write_term(Lines, [nl(true), spacing(next_argument)]).
+*/
+
+test(labels_scan_forward) :-
+    assemble0([
+        jsr(the_end)/absolute,
+        label(the_end),
+        rts/implied
+    ], Bytes, 0xC000),
+    assertion(Bytes = [0x20, 0x03, 0xC0, 0x60]).
+
+test(labels_scan_forward) :-
+    assemble0(Lines, [0x20, 0x03, 0xC0, 0x60], 0xC000),
+    assertion(Lines = [jsr(0xC003/absolute, rts/implied]).
 
 :- end_tests(assemble0).
 
