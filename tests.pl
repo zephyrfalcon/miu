@@ -2,6 +2,30 @@
 
 :- consult(miu).
 
+:- begin_tests(opcodes).
+
+% check if all opcodes match certain requirements:
+% - their values must be bytes, i.e. 0 >= x >= 255
+% - their modes must be known (as an opcode_size/2 fact)
+% - there should be no duplicate byte values.
+% (this is to catch obvious typos and omissions and such.)
+
+check_opcode(op(Name, Mode, HexValue)) :-
+    assertion(opcode_size(Mode, _)),
+    assertion(HexValue #>= 0),
+    assertion(HexValue #=< 255).
+
+test(opcodes_valid) :-
+    findall(op(Name, Mode, HexValue), opcode(Name, Mode, HexValue), Opcodes),
+    maplist(check_opcode, Opcodes).
+
+test(opcode_duplicates) :-
+    findall(Byte, opcode(_, _, Byte), Bytes),
+    assertion(all_different(Bytes)).
+    % if this fails, how do we find the duplicates?
+
+:- end_tests(opcodes).
+
 :- begin_tests(assemble_line).
 
 % dis/assemble rts
@@ -84,7 +108,7 @@ test(labels_scan_forward) :-
 
 test(labels_scan_forward) :-
     assemble0(Lines, [0x20, 0x03, 0xC0, 0x60], 0xC000),
-    assertion(Lines = [jsr(0xC003/absolute, rts/implied]).
+    assertion(Lines = [jsr(0xC003)/absolute, rts/implied]).
 
 test(branching) :-
     assemble0([
@@ -108,3 +132,4 @@ test(branching) :-
 
 go :-
     run_tests.
+
