@@ -201,7 +201,7 @@ opcode(tsx, implied, 0xBA).
 
 opcode(txa, implied, 0x8A).
 
-opcode(txs, implied, 0x98).
+opcode(txs, implied, 0x9A).
 
 opcode(tya, implied, 0x98).
 

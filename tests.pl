@@ -4,6 +4,15 @@
 
 :- begin_tests(opcodes).
 
+% XXX maybe move helper functions to separate module?
+%find_duplicates(List, Duplicates)
+find_duplicates([], []).
+find_duplicates([H|T], [H|Dups]) :-
+    member(H, T), !,
+    find_duplicates(T, Dups).
+find_duplicates([H|T], Dups) :-
+    find_duplicates(T, Dups).
+
 % check if all opcodes match certain requirements:
 % - their values must be bytes, i.e. 0 >= x >= 255
 % - their modes must be known (as an opcode_size/2 fact)
@@ -21,8 +30,9 @@ test(opcodes_valid) :-
 
 test(opcode_duplicates) :-
     findall(Byte, opcode(_, _, Byte), Bytes),
-    assertion(all_different(Bytes)).
-    % if this fails, how do we find the duplicates?
+    %assertion(find_duplicates(Bytes, [])). % why does this not complain?
+    find_duplicates(Bytes, Dups),
+    assertion(Dups = []).
 
 :- end_tests(opcodes).
 
