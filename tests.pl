@@ -10,7 +10,7 @@ find_duplicates([], []).
 find_duplicates([H|T], [H|Dups]) :-
     member(H, T), !,
     find_duplicates(T, Dups).
-find_duplicates([H|T], Dups) :-
+find_duplicates([_|T], Dups) :-
     find_duplicates(T, Dups).
 
 % check if all opcodes match certain requirements:
@@ -19,7 +19,7 @@ find_duplicates([H|T], Dups) :-
 % - there should be no duplicate byte values.
 % (this is to catch obvious typos and omissions and such.)
 
-check_opcode(op(Name, Mode, HexValue)) :-
+check_opcode(op(_Name, Mode, HexValue)) :-
     assertion(opcode_size(Mode, _)),
     assertion(HexValue #>= 0),
     assertion(HexValue #=< 255).
@@ -119,6 +119,14 @@ test(labels_scan_forward) :-
 test(labels_scan_forward) :-
     assemble0(Lines, [0x20, 0x03, 0xC0, 0x60], 0xC000),
     assertion(Lines = [jsr(0xC003)/absolute, rts/implied]).
+
+test(label_prefix) :-
+    assemble0([
+        jsr(the_end)/absolute, 
+        :the_end, 
+        rts/implied
+    ], Bytes, 0xC000),
+    assertion(Bytes = [0x20, 0x03, 0xC0, 0x60]).
 
 test(branching) :-
     assemble0([

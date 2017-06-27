@@ -14,6 +14,9 @@
 :- use_module(library(clpfd)).
 :- use_module(opcodes).
 
+% define prefix ':' so we can use it for label syntax
+:- op(150, fx, ':').
+
 % 16-bit number to/from high and low bytes.
 hilo(Word, High, Low) :-
     var(Word),
@@ -72,13 +75,12 @@ display_assemble_status(Line, Bytes, PC) :-
 scan_labels(Lines, _PC, []) :-
     var(Lines), !.  % just succeed if we're disassembling
 scan_labels([], _StartAddress, []).
-scan_labels([Line|Lines], PC, [Name=PC|Labels]) :-
-    Line = label(Name), !,
-    % format("label ~w set to ~16R~n", [Name, PC]),
+scan_labels([label(Name)|Lines], PC, [Name=PC|Labels]) :-
+    scan_labels(Lines, PC, Labels).
+scan_labels([:Name|Lines], PC, [Name=PC|Labels]) :-
     scan_labels(Lines, PC, Labels).
 scan_labels([Line|Lines], PC, Labels) :-
     Line = _Instruction/Mode, !,
-    % opcode(_Opcode, Mode, _),  % seems redundant
     opcode_size(Mode, Size),
     NewPC #= PC + Size, !,
     scan_labels(Lines, NewPC, Labels).
@@ -100,6 +102,9 @@ assemble([label(Name)|Lines], Bytes, PC, Values) :-
     % label has already been set by pre-scan, so this is a no-op
     nonvar(Name), % only matches when assembling, not disassembling
     assemble(Lines, Bytes, PC, Values), !.
+assemble([:Name|Lines], Bytes, PC, Values) :-
+    % same as label(Name)
+    assemble([label(Name)|Lines], Bytes, PC, Values), !.
 assemble([Line|Lines], [B|Bytes], PC, Values) :-
     assemble_line(Line, [B], PC, Values),
     %display_assemble_status(Line, [B], PC),
