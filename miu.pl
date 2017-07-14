@@ -83,7 +83,8 @@ assemble([label(Name)|Lines], Bytes, PC, Values) :-
     assemble(Lines, Bytes, PC, Values).
 assemble([:Name|Lines], Bytes, PC, Values) :-
     % same as label(Name)
-    assemble([label(Name)|Lines], Bytes, PC, Values), !.
+    nonvar(Name), !,
+    assemble([label(Name)|Lines], Bytes, PC, Values).
 assemble([Line|Lines], [B|Bytes], PC, Values) :-
     assemble_line(Line, [B], PC, Values),
     %display_assemble_status(Line, [B], PC),
@@ -106,7 +107,7 @@ assemble([Line|Lines], [B1,B2,B3|Bytes], PC, Values) :-
 % Produces an error if Name is not found.
 
 lookup_name(Name, [], _Value) :-
-    existence_error(name, Name), !.
+    existence_error(name, Name).
 lookup_name(Name, [Name=Value|_Values], Value) :- !.
 lookup_name(Name, [_|Values], Value) :-
     lookup_name(Name, Values, Value).
