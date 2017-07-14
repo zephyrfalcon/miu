@@ -1,0 +1,14 @@
+TODO:
+
+- handle data
+- handle unrecognized opcodes (i.e. raise an error)
+- if there's only one version of an opcode, allow omitting the /mode
+- parse strings like "LDA #$01"
+- conversely, translate terms like lda(0x01)/immediate to "LDA #$01"
+- refactor
+- command line interface
+
+- all of the stuff currently in miu.pl is basically the assembler code, which
+  can go in a separate module. miu.pl can then be the main program that takes
+  input (in various forms) and produces output.
+
