@@ -227,7 +227,9 @@ test(format_instruction) :-
 
 test(format_instruction) :-
     format:format_instruction(bmi(0xC000)/relative, S),
-    assertion(S = "BMI $C000").
+    assertion(S = "BMI $C000"),
+    format:format_instruction(bne(0x0801)/relative, S1),
+    assertion(S1= "BNE $0801").
 
 :- end_tests(format).
 
