@@ -213,8 +213,8 @@ opcode_size(absolute, 3).
 opcode_size(absolute_x, 3).
 opcode_size(absolute_y, 3).
 opcode_size(accumulator, 1).
-opcode_size(implied, 1).
 opcode_size(immediate, 2).
+opcode_size(implied, 1).
 opcode_size(indirect, 3).
 opcode_size(indirect_x, 2).
 opcode_size(indirect_y, 2).

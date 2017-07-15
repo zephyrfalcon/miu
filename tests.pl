@@ -185,6 +185,42 @@ test(format_instruction) :-
     format:format_instruction(jsr(49152)/absolute, S),
     assertion(S = "JSR $C000").
 
+test(format_instruction) :-
+    format:format_instruction(sta(0xBC)/zeropage, S),
+    assertion(S = "STA $BC").
+
+test(format_instruction) :-
+    format:format_instruction(lda(4)/immediate, S),
+    assertion(S = "LDA #$04").
+
+test(format_instruction) :-
+    format:format_instruction(lda(0xC0)/indirect_x, S),
+    assertion(S = "LDA ($C0,X)").
+
+test(format_instruction) :-
+    format:format_instruction(lda(0xC1)/indirect_y, S),
+    assertion(S = "LDA ($C1),Y").
+
+test(format_instruction) :-
+    format:format_instruction(ora(15)/zeropage_x, S),
+    assertion(S = "ORA $0F,X").
+
+test(format_instruction) :-
+    format:format_instruction(stx(17)/zeropage_y, S),
+    assertion(S = "STX $11,Y").
+
+test(format_instruction) :-
+    format:format_instruction(ora(49152)/absolute_x, S),
+    assertion(S = "ORA $C000,X").
+
+test(format_instruction) :-
+    format:format_instruction(and(49153)/absolute_y, S),
+    assertion(S = "AND $C001,Y").
+
+test(format_instruction) :-
+    format:format_instruction(jmp(49152)/indirect, S),
+    assertion(S = "JMP ($C000)").
+
 :- end_tests(format).
 
 go :-
