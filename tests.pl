@@ -221,6 +221,14 @@ test(format_instruction) :-
     format:format_instruction(jmp(49152)/indirect, S),
     assertion(S = "JMP ($C000)").
 
+test(format_instruction) :-
+    format:format_instruction(asl/accumulator, S),
+    assertion(S = "ASL A").
+
+test(format_instruction) :-
+    format:format_instruction(bmi(0xC000)/relative, S),
+    assertion(S = "BMI $C000").
+
 :- end_tests(format).
 
 go :-

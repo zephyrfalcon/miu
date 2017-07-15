@@ -34,9 +34,9 @@ format_instruction(Instruction/absolute_y, S) :-
     format_as_hex(Address, 4, StrAddress),
     format(string(S), "~w $~w,Y", [StrOpcode, StrAddress]), !.
 
-format_instruction(Instruction/implied, S) :-
+format_instruction(Instruction/accumulator, S) :-
     string_upper(Instruction, StrUpper),
-    format(string(S), "~w", [StrUpper]), !.
+    format(string(S), "~w A", [StrUpper]), !.
 
 format_instruction(Instruction/immediate, S) :-
     Instruction =.. [Opcode, Byte],
@@ -44,11 +44,21 @@ format_instruction(Instruction/immediate, S) :-
     format_as_hex(Byte, 2, StrByte),
     format(string(S), "~w #$~w", [StrOpcode, StrByte]), !.
 
+format_instruction(Instruction/implied, S) :-
+    string_upper(Instruction, StrUpper),
+    format(string(S), "~w", [StrUpper]), !.
+
 format_instruction(Instruction/indirect, S) :-
     Instruction =.. [Opcode, Address],
     string_upper(Opcode, StrOpcode),
     format_as_hex(Address, 4, StrAddress),
     format(string(S), "~w ($~w)", [StrOpcode, StrAddress]), !.
+
+format_instruction(Instruction/indirect_x, S) :-
+    Instruction =.. [Opcode, Byte],
+    string_upper(Opcode, StrOpcode),
+    format_as_hex(Byte, 2, StrByte),
+    format(string(S), "~w ($~w,X)", [StrOpcode, StrByte]), !.
 
 format_instruction(Instruction/indirect_y, S) :-
     Instruction =.. [Opcode, Byte],
@@ -56,11 +66,15 @@ format_instruction(Instruction/indirect_y, S) :-
     format_as_hex(Byte, 2, StrByte),
     format(string(S), "~w ($~w),Y", [StrOpcode, StrByte]), !.
 
-format_instruction(Instruction/indirect_x, S) :-
-    Instruction =.. [Opcode, Byte],
+% NOTE: these are the branching opcodes; when we write out the assembler code,
+% a full address (2 bytes) is usually used, but in memory only one byte is used
+% for the destination address. the Prolog formats use a full address (e.g.
+% bne(0xC000) so that is what we're using here.
+format_instruction(Instruction/relative, S) :-
+    Instruction =.. [Opcode, Address],
     string_upper(Opcode, StrOpcode),
-    format_as_hex(Byte, 2, StrByte),
-    format(string(S), "~w ($~w,X)", [StrOpcode, StrByte]), !.
+    format_as_hex(Address, 4, StrAddress),
+    format(string(S), "~w $~w", [StrOpcode, StrAddress]), !.
 
 format_instruction(Instruction/zeropage, S) :-
     Instruction =.. [Opcode, Byte],
