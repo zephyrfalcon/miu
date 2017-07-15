@@ -12,3 +12,5 @@ TODO:
   can go in a separate module. miu.pl can then be the main program that takes
   input (in various forms) and produces output.
 
+- split up tests
+

@@ -2,6 +2,7 @@
 
 :- consult(miu).
 :- use_module(tools).
+:- use_module(format).
 
 :- begin_tests(opcodes).
 
@@ -163,15 +164,24 @@ test(signed_unsigned) :-
     signed_unsigned(-127, 0x81),
     signed_unsigned(127, 0x7F).
 
-test(format_as_hex) :-
-    format_as_hex(255, 2, S1),
-    assertion(S1 = "FF"),
-    format_as_hex(255, 4, S2),
-    assertion(S2 = "00FF"),
-    format_as_hex(49152, 4, S3),
-    assertion(S3 = "C000").
 
 :- end_tests(tools).
+
+:- begin_tests(format).
+
+test(format_as_hex) :-
+    format:format_as_hex(255, 2, S1),
+    assertion(S1 = "FF"),
+    format:format_as_hex(255, 4, S2),
+    assertion(S2 = "00FF"),
+    format:format_as_hex(49152, 4, S3),
+    assertion(S3 = "C000").
+
+test(format_instruction) :-
+    format:format_instruction(rts/implied, S),
+    assertion(S = "RTS").
+
+:- end_tests(format).
 
 go :-
     run_tests.
