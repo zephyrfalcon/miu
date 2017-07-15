@@ -1,6 +1,7 @@
 % tools.pl
 
-:- module(tools, [hilo/3, signed_unsigned/2, write_hex_bytes/1]).
+:- module(tools, [hilo/3, signed_unsigned/2, write_hex_bytes/1,
+                  format_as_hex/3]).
 
 % 16-bit number to/from high and low bytes.
 hilo(Word, High, Low) :-
@@ -32,4 +33,8 @@ write_hex_bytes([B|Bs]) :-
     write_hex_bytes(Bs).
 
 % TODO: add predicate to convert number to 2- or 4-digit hex value.
+
+format_as_hex(Number, Size, HexString) :-
+    format(string(FormatString), "~~|~~`0t~~16R~~~w+", [Size]),
+    format(string(HexString), FormatString, [Number]).
 
