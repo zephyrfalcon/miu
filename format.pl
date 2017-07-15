@@ -30,6 +30,15 @@ format_pattern(zeropage, "~w $~w").
 format_pattern(zeropage_x, "~w $~w,X").
 format_pattern(zeropage_y, "~w $~w,Y").
 
+% hex_value_size(Mode, PrintSize)
+% Determine the print size of an instruction in the given address mode.
+% Relative addressing is the odd one out here (value takes one byte in memory,
+% but we display a full 16-bit address, so 4 hex numbers).
+hex_value_size(relative, 4) :- !.
+hex_value_size(Mode, 4) :-
+    opcode_size(Mode, 3), !.
+hex_value_size(_Mode, 2).
+
 format_instruction(Opcode/Mode, S) :-
     opcode(Opcode, _, _),  % make sure opcode exists
     string_upper(Opcode, StrOpcode),
@@ -39,10 +48,9 @@ format_instruction(Opcode/Mode, S) :-
 format_instruction(Instruction/Mode, S) :-
     Instruction =.. [Opcode, Value], 
     opcode(Opcode, Mode, _),  % make sure opcode/mode combination is valid
-    opcode_size(Mode, Size),
     string_upper(Opcode, StrOpcode),
     format_pattern(Mode, FormatString),
-    ((Size = 3; Mode = relative) -> HexSize = 4 ; HexSize = 2),  % ugly!
+    hex_value_size(Mode, HexSize),
     format_as_hex(Value, HexSize, HexValue), !,  
     format(string(S), FormatString, [StrOpcode, HexValue]).
 
