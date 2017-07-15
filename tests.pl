@@ -181,6 +181,10 @@ test(format_instruction) :-
     format:format_instruction(rts/implied, S),
     assertion(S = "RTS").
 
+test(format_instruction) :-
+    format:format_instruction(jsr(49152)/absolute, S),
+    assertion(S = "JSR $C000").
+
 :- end_tests(format).
 
 go :-
