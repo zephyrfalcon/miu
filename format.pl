@@ -9,12 +9,8 @@
 :- use_module(opcodes).
 
 format_as_hex(Number, Size, HexString) :-
-    format(string(FormatString), "~~|~~`0t~~16R~~~w+", [Size]),
+    format(string(FormatString), "~~|~~`0t~~16R~~~w+", [Size]),  % tja
     format(string(HexString), FormatString, [Number]).
-
-% 
-% format_instruction(+Instruction/+Mode, -S)
-% Format the given instruction (in Prolog format) as a string.
 
 format_pattern(absolute, "~w $~w").
 format_pattern(absolute_x, "~w $~w,X").
@@ -39,6 +35,10 @@ hex_value_size(Mode, 4) :-
     opcode_size(Mode, 3), !.
 hex_value_size(_Mode, 2).
 
+% 
+% format_instruction(+Instruction/+Mode, -S)
+% Format the given instruction (in Prolog format) as a string.
+
 format_instruction(Opcode/Mode, S) :-
     opcode(Opcode, _, _),  % make sure opcode exists
     string_upper(Opcode, StrOpcode),
@@ -62,4 +62,6 @@ format_instruction(Instruction/Mode, S) :-
 % invalid instruction and/or mode
 format_instruction(Instruction/Mode, _) :-
     existence_error(instruction, Instruction/Mode).
+
+% TODO: labels etc
 

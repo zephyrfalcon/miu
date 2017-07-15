@@ -14,4 +14,5 @@ TODO:
 
 - split up tests
 
-- refactor formatting predicates; lots of duplicate code here.
+- add formatting for labels and other constructs 
+
