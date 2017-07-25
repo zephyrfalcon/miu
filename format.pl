@@ -30,10 +30,13 @@ format_pattern(zeropage_y, "~w $~w,Y").
 % Determine the print size of an instruction in the given address mode.
 % Relative addressing is the odd one out here (value takes one byte in memory,
 % but we display a full 16-bit address, so 4 hex numbers).
-hex_value_size(relative, 4) :- !.
+hex_value_size(relative, 4).
 hex_value_size(Mode, 4) :-
-    opcode_size(Mode, 3), !.
-hex_value_size(_Mode, 2).
+    opcode_size(Mode, 3).
+hex_value_size(Mode, 2) :-
+    Mode \== relative,
+    opcode_size(Mode, Size),
+    Size \== 3.
 
 % 
 % format_instruction(+Instruction/+Mode, -S)
@@ -50,8 +53,8 @@ format_instruction(Instruction/Mode, S) :-
     opcode(Opcode, Mode, _),  % make sure opcode/mode combination is valid
     string_upper(Opcode, StrOpcode),
     format_pattern(Mode, FormatString),
-    hex_value_size(Mode, HexSize),
-    format_as_hex(Value, HexSize, HexValue), !,  
+    hex_value_size(Mode, HexSize), !,
+    format_as_hex(Value, HexSize, HexValue),   
     format(string(S), FormatString, [StrOpcode, HexValue]).
 
 % NOTE: re: the branching opcodes; when we write out the assembler code,
