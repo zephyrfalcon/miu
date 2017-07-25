@@ -1,8 +1,11 @@
 % tests.pl
 
-:- consult(miu).
+% :- consult(miu).
 :- use_module(tools).
 :- use_module(format).
+:- use_module(assemble).
+:- use_module(opcodes).
+:- use_module(library(clpfd)).
 
 :- begin_tests(opcodes).
 

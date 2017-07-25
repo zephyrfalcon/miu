@@ -1,6 +1,9 @@
 % tools.pl
 
-:- module(tools, [hilo/3, signed_unsigned/2, write_hex_bytes/1]).
+:- module(tools, [hilo/3, signed_unsigned/2, write_hex_bytes/1,
+                  lookup_name/3, translate_value/3]).
+
+:- use_module(library(clpfd)).
 
 % 16-bit number to/from high and low bytes.
 hilo(Word, High, Low) :-
@@ -30,4 +33,25 @@ write_hex_bytes([]) :- nl.
 write_hex_bytes([B|Bs]) :-
     format("~|~`0t~16R~2+ ", [B]),  % don't ask...
     write_hex_bytes(Bs).
+
+%
+% lookup_name(Name, Values, Result)
+% One-way lookup of Name in Values. Stops at the first result found.
+% Produces an error if Name is not found.
+
+lookup_name(Name, [], _Value) :-
+    existence_error(name, Name).
+lookup_name(Name, [Name=Value|_Values], Value) :- !.
+lookup_name(Name, [_|Values], Value) :-
+    lookup_name(Name, Values, Value).
+
+%
+% translate_value(Value, Values, Byte)
+% If Value is a name (atom), then look it up and produce its value.
+% Otherwise, it evaluates to itself.
+
+translate_value(Value, Values, Byte) :-
+    atom(Value), !,
+    lookup_name(Value, Values, Byte), !.
+translate_value(Value, _, Value).
 
