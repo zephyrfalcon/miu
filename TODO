@@ -10,6 +10,9 @@ TODO:
 - conversely, translate terms like lda(0x01)/immediate to "LDA #$01"
 - refactor
 
+- documentation:
+  - explain the Prolog-based format
+
 - in opcodes that take a single byte, allow hi(Value) and lo(Value) (or
   similar) to use the high or low byte of a known value. e.g.
 
