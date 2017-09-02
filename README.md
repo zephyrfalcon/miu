@@ -20,6 +20,23 @@ to break), or when I master Prolog DCGs, whichever comes first. ;-)
 
 Since Prolog predicates are often multi-directional, I wanted to explore the
 idea of using the same code as both an assembler and a disassembler. The idea
-actually seems to work. :-) (More specifically, you can feed `assemble0/3` and
+actually seems to work. :-) 
+
+More specifically, you can feed `assemble0/3` and
 `assemble/4` either lines of Prolog-formatted assembler instructions, or a list
-of bytes, and it will produce the other.)
+of bytes, and it will produce the other. Consider these simple test cases:
+
+```prolog
+test(labels_scan_forward) :-
+    assemble0([
+        jsr(the_end)/absolute,
+        label(the_end),
+        rts/implied
+    ], Bytes, 0xC000),
+    assertion(Bytes = [0x20, 0x03, 0xC0, 0x60]).
+
+test(labels_scan_forward) :-
+    assemble0(Lines, [0x20, 0x03, 0xC0, 0x60], 0xC000),
+    assertion(Lines = [jsr(0xC003)/absolute, rts/implied]).
+```
+
