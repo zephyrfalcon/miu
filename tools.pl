@@ -1,7 +1,8 @@
 % tools.pl
 
 :- module(tools, [hilo/3, signed_unsigned/2, write_hex_bytes/1,
-                  lookup_name/3, translate_value/3]).
+                  lookup_name/3, translate_value/3, strip_whitespace/2,
+                  single_spaced/2]).
 
 :- use_module(library(clpfd)).
 
@@ -54,4 +55,22 @@ translate_value(Value, Values, Byte) :-
     atom(Value), !,
     lookup_name(Value, Values, Byte), !.
 translate_value(Value, _, Value).
+
+%
+% strip_whitespace(+SIn, -SOut)
+% Strip a string SIn from leading and trailing whitespace, producing SOut.
+
+strip_whitespace(SIn, SOut) :-
+    split_string(SIn, "", " \n\t\r", [SOut]).
+
+%
+% single_spaced(+SIn, -SOut)
+% Look for contiguous whitespace (i.e. 2 or more consecutive whitespace
+% characters) in string SIn, and replace each occurrence with a single space,
+% producing SOut.
+% (SIn is silently assumed to have no leading or trailing whitespace.)
+
+single_spaced(SIn, SOut) :-
+    split_string(SIn, " \t", " \t", Parts),
+    atomics_to_string(Parts, " ", SOut).
 

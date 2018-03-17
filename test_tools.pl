@@ -14,6 +14,13 @@ test(signed_unsigned) :-
     signed_unsigned(-127, 0x81),
     signed_unsigned(127, 0x7F).
 
+test(strip_whitespace) :-
+    strip_whitespace("  Hello   friends  ", S),
+    assertion(S = "Hello   friends").
+
+test(single_spaced) :-
+    single_spaced("I  like   cookies", S),
+    assertion(S = "I like cookies").
 
 :- end_tests(tools).
 
