@@ -1,7 +1,8 @@
 % parsing.pl
 
 :- module(parsing, [optional_whitespace//0, 
-                    required_whitespace//0]).
+                    required_whitespace//0,
+                    label//1]).
 
 % Source: https://www.metalevel.at/prolog/dcg
 % SWIPL doesn't seem to have this built in. No matter:
@@ -17,4 +18,8 @@ optional_whitespace -->
 required_whitespace -->
     [W], { char_type(W, space) }.
 
+label(Name) -->
+    list(NameChars), 
+    `:`, !,
+    { atom_chars(Name, NameChars) }.
 

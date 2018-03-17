@@ -12,4 +12,11 @@ test(optional_whitespace) :-
 test(optional_whitespace) :-
     phrase(optional_whitespace, ``).
 
+test(label) :-
+    phrase(label(Name), `foo:`),
+    assertion(Name = foo).
+test(label) :-
+    phrase(label(Name), `FOO:`),
+    assertion(Name = 'FOO').
+
 :- end_tests(parsing).
