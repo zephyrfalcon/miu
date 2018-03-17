@@ -19,4 +19,13 @@ test(label) :-
     phrase(label(Name), `FOO:`),
     assertion(Name = 'FOO').
 
+% "backwards": produce `foo:` from label(foo)
+test(label) :-
+    phrase(label(foo), `foo:`).
+
+test(instruction_label) :-
+    phrase(instruction(label(Name)), `bar:`),
+    assertion(Name = bar).
+
 :- end_tests(parsing).
+
