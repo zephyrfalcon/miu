@@ -5,6 +5,7 @@
                     label//1,
                     instruction//1]).
 
+% treat strings like `abc` like a list of chars
 :- set_prolog_flag(back_quotes, chars).
 
 /* 
@@ -60,7 +61,7 @@ instruction(label(Name)) -->
     label(Name).
 
 instruction(Opcode/implied) -->
-    list(OpcodeChars),
+    list(OpcodeChars), 
     { atom_chars(Opcode, OpcodeChars),
-      opcode(Opcode, implied, _) }.
+      opcode(Opcode, implied, _), ! }.
 
