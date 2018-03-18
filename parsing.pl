@@ -108,6 +108,11 @@ instruction(Head/absolute) -->
     { Head =.. [Opcode, Address] }.
     % TODO: check if address in correct range
 
+instruction(Opcode/accumulator) -->
+    asm_opcode(Opcode/accumulator),
+    required_whitespace,
+    any_of(`aA`, _),
+    eos, !.
 
 % TODO:
 % parse_line(Line, Instruction)           (bidirectional?)

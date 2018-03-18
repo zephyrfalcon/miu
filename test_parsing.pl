@@ -64,6 +64,8 @@ test(instruction_absolute, [fail]) :-
     % because there are still characters left.
     phrase(instruction(_/absolute), `adc $c000,x`).
 
+% TODO: test uppercase
+
 test(instruction_absolute_x) :-
     phrase(instruction(I), `adc $D000,X`),
     assertion(I = adc(0xD000)/absolute_x).
@@ -71,6 +73,11 @@ test(instruction_absolute_x) :-
 test(instruction_absolute_y) :-
     phrase(instruction(I), `lda $C010,Y`),
     assertion(I = lda(0xC010)/absolute_y).
+
+test(instruction_accumulator) :-
+    phrase(instruction(I), `lsr a`),
+    assertion(I = lsr/accumulator).
+
 
 :- end_tests(parsing).
 
