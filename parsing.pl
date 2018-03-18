@@ -7,9 +7,6 @@
 
 :- use_module(library(dcg/basics)).
 
-% treat strings like `abc` like a list of chars
-:- set_prolog_flag(back_quotes, chars).
-
 /* 
 
 Current idea:
@@ -48,11 +45,11 @@ list([L|Ls]) --> [L], list(Ls).
 % Match 0 or 1 whitespace characters.
 optional_whitespace --> [].
 optional_whitespace -->
-    [W], { char_type(W, space) }.
+    [W], { code_type(W, space) }.
 
 % Match exactly one whitespace character.
 required_whitespace -->
-    [W], { char_type(W, space) }.
+    [W], { code_type(W, space) }.
 
 asm_number(N) -->
     integer(N), !.
@@ -63,19 +60,19 @@ asm_number(N) -->
 label(Name) -->
     list(NameChars), 
     `:`, !,
-    { atom_chars(Name, NameChars) }.
+    { atom_codes(Name, NameChars) }.
 
 instruction(label(Name)) -->
     label(Name).
 
 instruction(Opcode/implied) -->
     list(OpcodeChars), 
-    { atom_chars(Opcode, OpcodeChars),
+    { atom_codes(Opcode, OpcodeChars),
       opcode(Opcode, implied, _), ! }.
 
 instruction(Head/absolute) -->
     list(OpcodeChars),
-    { atom_chars(Opcode, OpcodeChars),
+    { atom_codes(Opcode, OpcodeChars),
       opcode(Opcode, absolute, _), ! },
     required_whitespace,
     asm_number(Address),

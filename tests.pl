@@ -1,7 +1,5 @@
 % tests.pl
 
-:- set_prolog_flag(back_quotes, chars).
-
 % :- consult(miu).
 :- use_module(tools).
 :- use_module(format).

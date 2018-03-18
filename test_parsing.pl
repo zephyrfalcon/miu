@@ -2,8 +2,6 @@
 
 :- begin_tests(parsing).
 
-:- set_prolog_flag(back_quotes, chars).
-
 test(required_whitespace) :-
     phrase(required_whitespace, ` `).
 test(required_whitespace, [fail]) :-
@@ -30,11 +28,9 @@ test(asm_number) :-
 test(asm_number) :-
     phrase(parsing:asm_number(X), `$C000`),
     assertion(X = 49152).
-% PROBLEM: we pass a number in there, it generates a list of *codes*, which
-% fails the tests!
 test(asm_number) :-
-    phrase(parsing:asm_number(49152), `49152`).  % ?!
-test(asm_number) :-
+    phrase(parsing:asm_number(49152), `49152`).
+test(asm_number) :- % generate a number string (well, a list of codes)
     phrase(parsing:asm_number(33), S),
     assertion(S = `33`).
 
