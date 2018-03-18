@@ -60,13 +60,10 @@ asm_number(N) -->
 asm_number(N) -->
     integer(N).
 
-% BUG: this totally does not generate the right opcode, and I don't know why.
-% i.e. phrase(asm_opcode(rts/implied), S) does NOT produce S = `rts` but
-% instead hangs >.<
 asm_opcode(Opcode/Mode) -->
     { opcode(Opcode, Mode, _),
       atom_codes(Opcode, Chars) }, 
-    nonblanks(Chars), !.
+    nonblanks(Chars).
 
 label(Name) -->
     list(NameChars), 
