@@ -58,10 +58,19 @@ test(instruction_absolute) :-
 test(instruction_absolute) :-
     phrase(instruction(I), `jmp $c000`),
     assertion(I = jmp(0xC000)/absolute).
+test(instruction_absolute, [fail]) :-
+    % partial matches should fail; e.g. adc(0xC000)/absolute would be a match
+    % for the first part of the string, `adc $c000`, but should be rejected
+    % because there are still characters left.
+    phrase(instruction(_/absolute), `adc $c000,x`).
 
 test(instruction_absolute_x) :-
     phrase(instruction(I), `adc $D000,X`),
     assertion(I = adc(0xD000)/absolute_x).
+
+test(instruction_absolute_y) :-
+    phrase(instruction(I), `lda $C010,Y`),
+    assertion(I = lda(0xC010)/absolute_y).
 
 :- end_tests(parsing).
 

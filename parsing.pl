@@ -87,7 +87,18 @@ instruction(Head/absolute_x) -->
     optional_whitespace,
     `,`,
     optional_whitespace,
-    any_of(`xX`, X), 
+    any_of(`xX`, _), 
+    eos, !.
+
+instruction(Head/absolute_y) -->
+    asm_opcode(Opcode/absolute_y),
+    required_whitespace,
+    asm_number(Address),
+    { Head =.. [Opcode, Address] },
+    optional_whitespace,
+    `,`,
+    optional_whitespace,
+    any_of(`yY`, _), 
     eos, !.
 
 instruction(Head/absolute) -->
