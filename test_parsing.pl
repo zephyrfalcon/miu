@@ -12,6 +12,10 @@ test(optional_whitespace) :-
 test(optional_whitespace) :-
     phrase(optional_whitespace, ``).
 
+test(any_of) :-
+    phrase(parsing:any_of(`xX`, X), `x`),
+    assertion([X] = `x`).
+
 test(label) :-
     phrase(label(Name), `foo:`),
     assertion(Name = foo).
@@ -59,6 +63,10 @@ test(instruction_absolute) :-
 test(instruction_absolute) :-
     phrase(instruction(I), `jmp $c000`),
     assertion(I = jmp(0xC000)/absolute).
+
+test(instruction_absolute_x) :-
+    phrase(instruction(I), `adc $D000,X`),
+    assertion(I = adc(0xD000)/absolute_x).
 
 :- end_tests(parsing).
 

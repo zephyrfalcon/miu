@@ -42,6 +42,11 @@ optional_whitespace -->
 required_whitespace -->
     [W], { code_type(W, space) }.
 
+% Match any of the values in Codes.
+any_of(Codes, Result) -->
+    [Result],
+    { member(Result, Codes), ! }.
+
 % Parse a number, either in decimal or in hexadecimal (in which case it needs
 % to be preceded by a "$").
 asm_number(N) -->
@@ -51,9 +56,10 @@ asm_number(N) -->
     integer(N).
 
 asm_opcode(Opcode/Mode) -->
+    nonblanks(Chars),
+    { Chars = [_,_,_] },  % opcodes are always exactly 3 characters
     { opcode(Opcode, Mode, _),
-      atom_codes(Opcode, Chars) }, 
-    nonblanks(Chars), !.
+      atom_codes(Opcode, Chars), ! }.
 
 label(Name) -->
     list(NameChars), 
@@ -64,16 +70,27 @@ instruction(label(Name)) -->
     label(Name).
 
 instruction(Opcode/implied) -->
-    list(OpcodeChars), 
+    list(OpcodeChars),  
+    % ^ should be nonblanks but for some reason that just causes it to hang...
     { atom_codes(Opcode, OpcodeChars),
       opcode(Opcode, implied, _), ! }.
 
 instruction(Head/absolute) -->
     asm_opcode(Opcode/absolute),
     required_whitespace,
-    { Head =.. [Opcode, Address] },
-    asm_number(Address), !.
+    asm_number(Address), !,
+    { Head =.. [Opcode, Address] }.
     % TODO: check if address in correct range
+
+instruction(Head/absolute_x) -->
+    asm_opcode(Opcode/absolute_x),
+    required_whitespace,
+    asm_number(Address),
+    { Head =.. [Opcode, Address] },
+    optional_whitespace,
+    `,`,
+    optional_whitespace,
+    [X], any_of(`xX`, X).
 
 % TODO:
 % parse_line(Line, Instruction)           (bidirectional?)
