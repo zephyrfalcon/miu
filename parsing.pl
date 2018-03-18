@@ -115,6 +115,14 @@ instruction(Opcode/accumulator) -->
     any_of(`aA`, _),
     eos, !.
 
+instruction(Head/immediate) -->
+    asm_opcode(Opcode/immediate),
+    required_whitespace,
+    `#`,
+    asm_number(Value), 
+    eos, !,
+    { Head =.. [Opcode, Value] }.
+
 % TODO:
 % parse_line(Line, Instruction)           (bidirectional?)
 % parse_lines(Lines, Instructions)        (bidirectional?)

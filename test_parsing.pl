@@ -79,6 +79,9 @@ test(instruction_accumulator) :-
     phrase(instruction(I), `lsr a`),
     assertion(I = lsr/accumulator).
 
+test(instruction_immediate) :-
+    phrase(instruction(I), `ldy #$FF`),
+    assertion(I = ldy(0xFF)/immediate).
 
 :- end_tests(parsing).
 
