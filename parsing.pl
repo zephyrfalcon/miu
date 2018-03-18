@@ -6,6 +6,7 @@
                     instruction//1]).
 
 :- use_module(library(dcg/basics)).
+:- use_module(opcodes).
 
 /* 
 
@@ -51,11 +52,19 @@ optional_whitespace -->
 required_whitespace -->
     [W], { code_type(W, space) }.
 
-asm_number(N) -->
-    integer(N), !.
+% Parse a number, either in decimal or in hexadecimal (in which case it needs
+% to be preceded by a "$").
 asm_number(N) -->
     `$`,
-    xinteger(N).
+    xinteger(N), !.
+asm_number(N) -->
+    integer(N).
+
+% BUG: this totally does not find the right opcode, and I don't know why.
+asm_opcode(Opcode/Mode) -->
+    nonblanks(Chars),
+    { opcode(Opcode, Mode, _),
+      atom_codes(Opcode, Chars), ! }.
 
 label(Name) -->
     list(NameChars), 
@@ -71,13 +80,13 @@ instruction(Opcode/implied) -->
       opcode(Opcode, implied, _), ! }.
 
 instruction(Head/absolute) -->
-    list(OpcodeChars),
-    { atom_codes(Opcode, OpcodeChars),
-      opcode(Opcode, absolute, _), ! },
+    asm_opcode(Opcode/absolute),
+    %{ atom_codes(Opcode, OpcodeChars),
+    %  opcode(Opcode, absolute, _), ! },
     required_whitespace,
     asm_number(Address),
     % TODO: check if address in correct range
-    Head =.. [Opcode, Address].
+    { Head =.. [Opcode, Address] }.
 
 % TODO:
 % parse_line(Line, Instruction)           (bidirectional)

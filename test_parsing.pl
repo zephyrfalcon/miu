@@ -32,7 +32,16 @@ test(asm_number) :-
     phrase(parsing:asm_number(49152), `49152`).
 test(asm_number) :- % generate a number string (well, a list of codes)
     phrase(parsing:asm_number(33), S),
-    assertion(S = `33`).
+    assertion(S = `$21`).
+
+test(asm_opcode) :-
+    phrase(parsing:asm_opcode(rts/implied), `rts`).
+test(asm_opcode) :-
+    phrase(parsing:asm_opcode(I), `rts`),
+    assertion(I = rts/implied).
+test(asm_opcode) :-
+    phrase(parsing:asm_opcode(rts/implied), Chars),
+    assertion(Chars = `rts`).
 
 % "backwards": produce `foo:` from label(foo)
 test(label) :-
@@ -51,8 +60,14 @@ test(instruction_implied) :-
     phrase(instruction(rts/implied), Chars),
     assertion(Chars = `rts`).
 
-%test(instruction_absolute) :-
-%    phrase(instruction(jmp(0xC000)/absolute), `jmp $c000`).
+test(instruction_absolute) :-
+    phrase(instruction(jmp(0xC000)/absolute), `jmp $c000`).
+test(instruction_absolute) :-
+    phrase(instruction(I), `jmp $c000`),
+    assertion(I = jmp(0xC000)/absolute).
+test(instruction_absolute) :-
+    phrase(instruction(jmp(0xC000)/absolute), Chars),
+    assertion(Chars = `jmp $c000`).
 
 :- end_tests(parsing).
 
