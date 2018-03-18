@@ -1,13 +1,20 @@
 TODO:
 
 - handle data
+  - but (how) will this work bidirectionally? of course a disassembler usually
+    tries to interpret everything as instructions, or signal that a byte is not
+    a valid opcode, but this is not an error...
 - handle unrecognized opcodes (i.e. raise an error)
+  - only when assembling
 - if there's only one version of an opcode, allow omitting the /mode
-- parse strings like "LDA #$01"
+  - may be hard and may affect bidirectionality
+- [currently in progress: parsing.pl]
+  parse strings like "LDA #$01"
   - in the end, it should be possible to give Miu a list of "normally"
     formatted assembler instructions, and she will translate these to Prolog
     terms, then assemble
-- conversely, translate terms like lda(0x01)/immediate to "LDA #$01"
+- [currently in progress: format.pl]
+  conversely, translate terms like lda(0x01)/immediate to "LDA #$01"
 - refactor
 
 - documentation:
@@ -20,11 +27,17 @@ TODO:
     lda(hi(Address))/immediate,
     ...
 
+- try again to do hilo/3 using CLPFD
+
 - all of the stuff currently in miu.pl is basically the assembler code, which
   can go in a separate module. miu.pl can then be the main program that takes
   input (in various forms) and produces output.
 
-- split up tests
+- parsing of assembler syntax
+  - since the DCGs are to be used unidirectionally anyway, they might as well
+    handle any number of optional/required whitespace (as opposed to the
+    current approach where "infix" whitespace is normalized to a single space,
+    and then parsed as such)
 
 - add formatting for labels and other constructs 
 
