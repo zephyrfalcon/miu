@@ -83,5 +83,19 @@ test(instruction_immediate) :-
     phrase(instruction(I), `ldy #$FF`),
     assertion(I = ldy(0xFF)/immediate).
 
+test(instruction_indirect) :-
+    phrase(instruction(I), `jmp ($E000)`),
+    assertion(I = jmp(0xE000)/indirect).
+test(instruction_indirect) :-
+    phrase(instruction(I), `jmp ( $E001 )`), % allow spaces
+    assertion(I = jmp(0xE001)/indirect).
+
+test(instruction_indirect_x) :-
+    phrase(instruction(I), `ORA ($E100,X)`),
+    assertion(I = ora(0xE100)/indirect_x).
+test(instruction_indirect_x) :-
+    phrase(instruction(I), `ora ( $E001 , X )`), % allow spaces
+    assertion(I = ora(0xE001)/indirect_x).
+
 :- end_tests(parsing).
 
