@@ -34,13 +34,11 @@ list([])     --> [].
 list([L|Ls]) --> [L], list(Ls).
 
 % Match 0 or 1 whitespace characters.
+optional_whitespace --> required_whitespace, !. 
 optional_whitespace --> [].
-optional_whitespace -->
-    [W], { code_type(W, space) }.
 
 % Match exactly one whitespace character.
-required_whitespace -->
-    [W], { code_type(W, space) }.
+required_whitespace --> [W], { code_type(W, space) }.
 
 % Match any of the values in Codes.
 any_of(Codes, Result) -->
