@@ -1,5 +1,23 @@
 % parsing.pl
 
+% [2018-03-17]
+% CURRENT STATUS: Uncertain
+% I was hoping to use DCGs for both parsing and generating assembler syntax,
+% but the generating part seems to be a problem. Technically I don't *need*
+% bidirectional parsing <--> generating for input/output. There's already the
+% format.pl module for generating output; I could use DCGs for parsing input
+% only, or use regular expressions (which is less Prolog-esque but might well
+% be faster).
+
+% There are several problems with using DCGs for generating output:
+% - in case of numbers, apparently all combinations are tried until a matching
+%   one is found
+% - in the case of whitespace, code_type(W, space) produces the value 9 (tab)
+%   first, where I would prefer a space
+% - it is common to use padding for 2- and 4-byte hex values, so e.g. "$01"
+%   instead of "$1", but the DCGs don't provide for that
+% Some of these can be solved, but at the expense of input, it seems. 
+
 :- module(parsing, [optional_whitespace//0, 
                     required_whitespace//0,
                     label//1,
