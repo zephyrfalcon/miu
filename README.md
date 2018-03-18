@@ -33,6 +33,8 @@ test(labels_scan_forward) :-
 
 ## Status
 
+**2018-03-07**: **This branch** (`dcgs-for-generating`) is here mostly to preserve my earlier attempt to use DCGs for both parsing of input and generating of output. The generating will work, *in theory*... but in reality is unusably slow. As I understand it, to generate a number, it will try all (hex) digit combinations until it finds the right ones. It will also try several opcodes of the same mode, until the right one is found, which by itself is not so costly, but the resulting recalculation of the number is.
+
 The actual assembling and disassembling works, that is, assembling from a
 Prolog semi-DSL to a list of bytes, and vice versa. What is not implemented
 yet, is dis/assembling from/to a more regular text format. Nor is there
