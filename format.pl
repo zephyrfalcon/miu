@@ -1,8 +1,6 @@
 % format.pl
-% Format assembler instructions (in Prolog format) to strings, and vice versa.
-
-% (It would be cool if this also was bidirectional... maybe using a DCG or
-% something... not sure if that's possible. :-)
+% Format assembler instructions (in Prolog format) as strings in common 6502
+% assembler syntax.
 
 :- module(format, []).
 
@@ -11,6 +9,10 @@
 format_as_hex(Number, Size, HexString) :-
     format(string(FormatString), "~~|~~`0t~~16R~~~w+", [Size]),  % tja
     format(string(HexString), FormatString, [Number]).
+
+% TODO: is there a better way to do this? e.g. in Python I can just say "%02x"
+% to have a 2-character zero-padded hexadecimal number. but format/2 doesn't
+% seem to allow for that without some devilry.
 
 format_pattern(absolute, "~w $~w").
 format_pattern(absolute_x, "~w $~w,X").
@@ -43,7 +45,8 @@ hex_value_size(Mode, 2) :-
 % Format the given instruction (in Prolog format) as a string.
 
 format_instruction(Opcode/Mode, S) :-
-    opcode(Opcode, _, _),  % make sure opcode exists
+    atom(Opcode),
+    opcode(Opcode, Mode, _),  % make sure opcode exists
     string_upper(Opcode, StrOpcode),
     format_pattern(Mode, FormatString), !,
     format(string(S), FormatString, [StrOpcode]).

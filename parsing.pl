@@ -79,10 +79,6 @@ instruction(label(Name)) -->
 instruction(Opcode/implied) -->
     asm_opcode(Opcode/implied), 
     eos, !.
-    %nonblanks(OpcodeChars),  
-    % ^ should be nonblanks but for some reason that just causes it to hang...
-    %{ atom_codes(Opcode, OpcodeChars),
-    %  opcode(Opcode, implied, _), ! }.
 
 instruction(Head/absolute_x) -->
     asm_opcode(Opcode/absolute_x),
