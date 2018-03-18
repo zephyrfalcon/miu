@@ -5,6 +5,8 @@
                     label//1,
                     instruction//1]).
 
+:- use_module(library(dcg/basics)).
+
 % treat strings like `abc` like a list of chars
 :- set_prolog_flag(back_quotes, chars).
 
@@ -52,6 +54,12 @@ optional_whitespace -->
 required_whitespace -->
     [W], { char_type(W, space) }.
 
+asm_number(N) -->
+    integer(N), !.
+asm_number(N) -->
+    `$`,
+    xinteger(N).
+
 label(Name) -->
     list(NameChars), 
     `:`, !,
@@ -64,4 +72,17 @@ instruction(Opcode/implied) -->
     list(OpcodeChars), 
     { atom_chars(Opcode, OpcodeChars),
       opcode(Opcode, implied, _), ! }.
+
+instruction(Head/absolute) -->
+    list(OpcodeChars),
+    { atom_chars(Opcode, OpcodeChars),
+      opcode(Opcode, absolute, _), ! },
+    required_whitespace,
+    asm_number(Address),
+    % TODO: check if address in correct range
+    Head =.. [Opcode, Address].
+
+% TODO:
+% parse_line(Line, Instruction)           (bidirectional)
+% parse_lines(Lines, Instructions)   (bidirectional)
 
