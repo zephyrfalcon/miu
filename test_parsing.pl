@@ -42,6 +42,9 @@ test(asm_opcode) :-
     % has choicepoints because in theory there could be more opcodes named
     % 'rts' with different modes... (in practice there aren't, hence the cut)
     assertion(I = rts/implied).
+% opcodes can appear in uppercase
+test(asm_opcode) :-
+    phrase(parsing:asm_opcode(rts/implied), `RTS`).
 
 test(instruction_label) :-
     phrase(instruction(label(Name)), `bar:`),
@@ -63,8 +66,6 @@ test(instruction_absolute, [fail]) :-
     % for the first part of the string, `adc $c000`, but should be rejected
     % because there are still characters left.
     phrase(instruction(_/absolute), `adc $c000,x`).
-
-% TODO: test uppercase
 
 test(instruction_absolute_x) :-
     phrase(instruction(I), `adc $D000,X`),

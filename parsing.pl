@@ -55,9 +55,12 @@ asm_number(N) -->
 
 asm_opcode(Opcode/Mode) -->
     nonblanks(Chars),
-    { Chars = [_,_,_] },  % opcodes are always exactly 3 characters
-    { opcode(Opcode, Mode, _),
-      atom_codes(Opcode, Chars) }.
+    { Chars = [_,_,_],   % opcodes are always exactly 3 characters
+      % convert to lowercase
+      atom_codes(OpcodeA, Chars),
+      string_lower(OpcodeA, OpcodeS),
+      atom_string(Opcode, OpcodeS),
+      opcode(Opcode, Mode, _) }.
 
 label(Name) -->
     list(NameChars), 
@@ -74,10 +77,12 @@ instruction(label(Name)) -->
     label(Name).
 
 instruction(Opcode/implied) -->
-    list(OpcodeChars),  
+    asm_opcode(Opcode/implied), 
+    eos, !.
+    %nonblanks(OpcodeChars),  
     % ^ should be nonblanks but for some reason that just causes it to hang...
-    { atom_codes(Opcode, OpcodeChars),
-      opcode(Opcode, implied, _), ! }.
+    %{ atom_codes(Opcode, OpcodeChars),
+    %  opcode(Opcode, implied, _), ! }.
 
 instruction(Head/absolute_x) -->
     asm_opcode(Opcode/absolute_x),
