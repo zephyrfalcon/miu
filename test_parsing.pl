@@ -38,12 +38,10 @@ test(asm_number) :-
 test(asm_opcode) :-
     phrase(parsing:asm_opcode(rts/implied), `rts`).
 test(asm_opcode) :-
-    phrase(parsing:asm_opcode(I), `rts`),
+    phrase(parsing:asm_opcode(I), `rts`), !,
+    % has choicepoints because in theory there could be more opcodes named
+    % 'rts' with different modes... (in practice there aren't, hence the cut)
     assertion(I = rts/implied).
-
-% "backwards": produce `foo:` from label(foo)
-test(label) :-
-    phrase(label(foo), `foo:`).
 
 test(instruction_label) :-
     phrase(instruction(label(Name)), `bar:`),
@@ -54,9 +52,6 @@ test(instruction_implied) :-
 test(instruction_implied) :-
     phrase(instruction(I), `rts`),
     assertion(I = rts/implied).
-test(instruction_implied) :-
-    phrase(instruction(rts/implied), Chars),
-    assertion(Chars = `rts`).
 
 test(instruction_absolute) :-
     phrase(instruction(jmp(0xC000)/absolute), `jmp $c000`).

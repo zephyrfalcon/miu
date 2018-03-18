@@ -57,7 +57,7 @@ asm_opcode(Opcode/Mode) -->
     nonblanks(Chars),
     { Chars = [_,_,_] },  % opcodes are always exactly 3 characters
     { opcode(Opcode, Mode, _),
-      atom_codes(Opcode, Chars), ! }.
+      atom_codes(Opcode, Chars) }.
 
 label(Name) -->
     list(NameChars), 
