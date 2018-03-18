@@ -60,11 +60,13 @@ asm_number(N) -->
 asm_number(N) -->
     integer(N).
 
-% BUG: this totally does not find the right opcode, and I don't know why.
+% BUG: this totally does not generate the right opcode, and I don't know why.
+% i.e. phrase(asm_opcode(rts/implied), S) does NOT produce S = `rts` but
+% instead hangs >.<
 asm_opcode(Opcode/Mode) -->
-    nonblanks(Chars),
     { opcode(Opcode, Mode, _),
-      atom_codes(Opcode, Chars), ! }.
+      atom_codes(Opcode, Chars) }, 
+    nonblanks(Chars), !.
 
 label(Name) -->
     list(NameChars), 
@@ -84,9 +86,9 @@ instruction(Head/absolute) -->
     %{ atom_codes(Opcode, OpcodeChars),
     %  opcode(Opcode, absolute, _), ! },
     required_whitespace,
-    asm_number(Address),
+    { Head =.. [Opcode, Address] },
+    asm_number(Address).
     % TODO: check if address in correct range
-    { Head =.. [Opcode, Address] }.
 
 % TODO:
 % parse_line(Line, Instruction)           (bidirectional)

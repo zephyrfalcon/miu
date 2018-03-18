@@ -66,7 +66,7 @@ test(instruction_absolute) :-
     phrase(instruction(I), `jmp $c000`),
     assertion(I = jmp(0xC000)/absolute).
 test(instruction_absolute) :-
-    phrase(instruction(jmp(0xC000)/absolute), Chars),
+    phrase(instruction(jmp(0xC000)/absolute), Chars),  % FAILS
     assertion(Chars = `jmp $c000`).
 
 :- end_tests(parsing).
