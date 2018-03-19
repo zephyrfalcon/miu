@@ -97,5 +97,12 @@ test(instruction_indirect_x) :-
     phrase(instruction(I), `ora ( $E001 , X )`), % allow spaces
     assertion(I = ora(0xE001)/indirect_x).
 
+test(instruction_indirect_y) :-
+    phrase(instruction(I), `SBC ($E200),Y`),
+    assertion(I = sbc(0xE200)/indirect_y).
+test(instruction_indirect_y) :-
+    phrase(instruction(I), `sbc ( $E001 ) , Y`), % allow spaces
+    assertion(I = sbc(0xE001)/indirect_y).
+
 :- end_tests(parsing).
 

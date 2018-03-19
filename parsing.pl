@@ -149,6 +149,21 @@ instruction(Head/indirect_x) -->
     eos, !,
     { Head =.. [Opcode, Address] }.
 
+instruction(Head/indirect_y) -->
+    asm_opcode(Opcode/indirect_y),
+    required_whitespace,
+    `(`,
+    optional_whitespace,
+    asm_number(Address),
+    optional_whitespace,
+    `)`,
+    optional_whitespace,
+    `,`,
+    optional_whitespace,
+    any_of(`yY`, _),
+    eos, !,
+    { Head =.. [Opcode, Address] }.
+
 % TODO:
 % parse_line(Line, Instruction)           (bidirectional?)
 % parse_lines(Lines, Instructions)        (bidirectional?)
