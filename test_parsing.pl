@@ -104,5 +104,11 @@ test(instruction_indirect_y) :-
     phrase(instruction(I), `sbc ( $E001 ) , Y`), % allow spaces
     assertion(I = sbc(0xE001)/indirect_y).
 
+test(relative) :-
+    phrase(instruction(bne(0x0801)/relative), `bne $0801`).
+test(relative) :-
+    phrase(instruction(I), `bne $0802`),
+    assertion(I = bne(0x0802)/relative).
+
 :- end_tests(parsing).
 

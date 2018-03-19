@@ -63,8 +63,8 @@ asm_opcode(Opcode/Mode) -->
       opcode(Opcode, Mode, _) }.
 
 label(Name) -->
-    list(NameChars), 
-    `:`, !,
+    list(NameChars),  % should be nonblanks(NameChars) but that doesn't work 
+    `:`, eos, !,
     { atom_codes(Name, NameChars) }.
 
 % instruction(-Instruction)
@@ -104,6 +104,13 @@ instruction(Head/absolute_y) -->
 
 instruction(Head/absolute) -->
     asm_opcode(Opcode/absolute),
+    required_whitespace,
+    asm_number(Address), eos, !,
+    { Head =.. [Opcode, Address] }.
+    % TODO: check if address in correct range
+
+instruction(Head/relative) -->
+    asm_opcode(Opcode/relative),
     required_whitespace,
     asm_number(Address), eos, !,
     { Head =.. [Opcode, Address] }.
@@ -163,6 +170,7 @@ instruction(Head/indirect_y) -->
     any_of(`yY`, _),
     eos, !,
     { Head =.. [Opcode, Address] }.
+
 
 % TODO:
 % parse_line(Line, Instruction)           (bidirectional?)
