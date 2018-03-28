@@ -28,6 +28,19 @@ seems to be exceedingly slow, so I am using them for parsing only.
 
 */
 
+% Check if Value is between Low and High (inclusive). Succeeds if this is so,
+% fails with an error otherwise.
+check_value(Value, Low, High) :-
+    Value >= Low,
+    Value =< High, !.
+check_value(Value, Low, High) :-
+    must_be(between(Low, High), Value).
+
+is_word(Value) :-
+    check_value(Value, 0, 0xFFFF).
+is_byte(Value) :-
+    check_value(Value, 0, 255).
+
 % Source: https://www.metalevel.at/prolog/dcg
 % SWIPL doesn't seem to have this built in. No matter:
 list([])     --> [].
@@ -106,15 +119,15 @@ instruction(Head/absolute) -->
     asm_opcode(Opcode/absolute),
     required_whitespace,
     asm_number(Address), eos, !,
-    { Head =.. [Opcode, Address] }.
-    % TODO: check if address in correct range
+    { Head =.. [Opcode, Address],
+      is_word(Address) }.
 
 instruction(Head/relative) -->
     asm_opcode(Opcode/relative),
     required_whitespace,
     asm_number(Address), eos, !,
-    { Head =.. [Opcode, Address] }.
-    % TODO: check if address in correct range
+    { Head =.. [Opcode, Address],
+      is_word(Address) }.
 
 instruction(Opcode/accumulator) -->
     asm_opcode(Opcode/accumulator),
@@ -171,8 +184,16 @@ instruction(Head/indirect_y) -->
     eos, !,
     { Head =.. [Opcode, Address] }.
 
+instruction(Head/zeropage) -->
+    asm_opcode(Opcode/zeropage),
+    required_whitespace,
+    asm_number(Address), eos, !,
+    { Head =.. [Opcode, Address],
+      is_byte(Address) }.
 
 % TODO:
+% - whichever opcodes are not covered yet :)
+%
 % parse_line(Line, Instruction)           (bidirectional?)
 % parse_lines(Lines, Instructions)        (bidirectional?)
 

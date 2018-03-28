@@ -110,5 +110,11 @@ test(relative) :-
     phrase(instruction(I), `bne $0802`),
     assertion(I = bne(0x0802)/relative).
 
+test(zeropage) :-
+    phrase(instruction(adc(0x08)/zeropage), `adc $08`).
+test(relative) :-
+    phrase(instruction(I), `adc $10`),
+    assertion(I = adc(0x10)/zeropage).
+
 :- end_tests(parsing).
 

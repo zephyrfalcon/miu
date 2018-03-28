@@ -1,5 +1,19 @@
 TODO:
 
+- BUG: numbers need fixed
+  in hex, we can tell if a number is a byte (two hex digits) or a word (four
+  hex digits); everything else should be disallowed.
+  in hex, parsing a string like "ADC $02" is not ambiguous; the 2-digit value
+  indicates that this is the version of ADC that operates on the zero page and
+  takes a byte. similarly, "ADC $0002" is not ambiguous either; this is the
+  absolute version of ADC which takes a word (2 bytes).
+  but in decimal, we don't have these positions. "ADC 2" could mean either of
+  the two. unless we introduce a special syntax to tell the different modes
+  apart, this will be ambiguous.
+
+  TEMPORARY SOLUTION: disallow decimal numbers, and make sure all hex values
+  are either two or four hex digits.
+
 - handle data
   - but (how) will this work bidirectionally? of course a disassembler usually
     tries to interpret everything as instructions, or signal that a byte is not
