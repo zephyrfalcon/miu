@@ -58,13 +58,23 @@ any_of(Codes, Result) -->
     [Result],
     { member(Result, Codes), ! }.
 
-% Parse a number, either in decimal or in hexadecimal (in which case it needs
-% to be preceded by a "$").
-asm_number(N) -->
+% Parse hex numbers, either of two or four bytes long. Other lengths are
+% (currently) not allowed; neither are decimal numbers. Opcode DCG rules
+% specify which one they want, so there's no ambiguity between e.g. `ADC $02`
+% (zeropage) and `ADC $0002` (absolute).
+
+asm_byte(N) -->
     `$`,
-    xinteger(N), !.
-asm_number(N) -->
-    integer(N).
+    xdigit(B1),
+    xdigit(B2),
+    { N is B1 * 16 + B2 }.
+asm_word(N) -->
+    `$`,
+    xdigit(B1),
+    xdigit(B2),
+    xdigit(B3),
+    xdigit(B4),
+    { N is B4 + B3 << 4 + B2 << 8 + B1 << 12 }.
 
 asm_opcode(Opcode/Mode) -->
     nonblanks(Chars),
@@ -96,7 +106,7 @@ instruction(Opcode/implied) -->
 instruction(Head/absolute_x) -->
     asm_opcode(Opcode/absolute_x),
     required_whitespace,
-    asm_number(Address),
+    asm_word(Address),
     { Head =.. [Opcode, Address] },
     optional_whitespace,
     `,`,
@@ -107,7 +117,7 @@ instruction(Head/absolute_x) -->
 instruction(Head/absolute_y) -->
     asm_opcode(Opcode/absolute_y),
     required_whitespace,
-    asm_number(Address),
+    asm_word(Address),
     { Head =.. [Opcode, Address] },
     optional_whitespace,
     `,`,
@@ -118,14 +128,14 @@ instruction(Head/absolute_y) -->
 instruction(Head/absolute) -->
     asm_opcode(Opcode/absolute),
     required_whitespace,
-    asm_number(Address), eos, !,
+    asm_word(Address), eos, !,
     { Head =.. [Opcode, Address],
       is_word(Address) }.
 
 instruction(Head/relative) -->
     asm_opcode(Opcode/relative),
     required_whitespace,
-    asm_number(Address), eos, !,
+    asm_word(Address), eos, !,
     { Head =.. [Opcode, Address],
       is_word(Address) }.
 
@@ -139,7 +149,7 @@ instruction(Head/immediate) -->
     asm_opcode(Opcode/immediate),
     required_whitespace,
     `#`,
-    asm_number(Value), 
+    asm_byte(Value), 
     eos, !,
     { Head =.. [Opcode, Value] }.
 
@@ -148,7 +158,7 @@ instruction(Head/indirect) -->
     required_whitespace,
     `(`,
     optional_whitespace,
-    asm_number(Address),
+    asm_word(Address),
     optional_whitespace,
     `)`,
     eos, !,
@@ -159,7 +169,7 @@ instruction(Head/indirect_x) -->
     required_whitespace,
     `(`,
     optional_whitespace,
-    asm_number(Address),
+    asm_byte(Address),
     optional_whitespace,
     `,`,
     optional_whitespace,
@@ -174,7 +184,7 @@ instruction(Head/indirect_y) -->
     required_whitespace,
     `(`,
     optional_whitespace,
-    asm_number(Address),
+    asm_byte(Address),
     optional_whitespace,
     `)`,
     optional_whitespace,
@@ -187,7 +197,7 @@ instruction(Head/indirect_y) -->
 instruction(Head/zeropage) -->
     asm_opcode(Opcode/zeropage),
     required_whitespace,
-    asm_number(Address), eos, !,
+    asm_byte(Address), eos, !,
     { Head =.. [Opcode, Address],
       is_byte(Address) }.
 

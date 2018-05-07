@@ -23,17 +23,23 @@ test(label) :-
     phrase(label(Name), `FOO:`),
     assertion(Name = 'FOO').
 
-test(asm_number) :-
-    phrase(parsing:asm_number(X), `49152`),
+test(asm_word) :-
+    phrase(parsing:asm_word(X), `$c000`),
     assertion(X = 49152).
-test(asm_number) :-
-    phrase(parsing:asm_number(X), `$c000`),
+test(asm_word) :-
+    phrase(parsing:asm_word(X), `$C000`),
     assertion(X = 49152).
-test(asm_number) :-
-    phrase(parsing:asm_number(X), `$C000`),
-    assertion(X = 49152).
-test(asm_number) :-
-    phrase(parsing:asm_number(49152), `49152`).
+test(asm_word, [fail]) :-
+    phrase(parsing:asm_word(_), `$FF`).  % too short
+
+test(asm_byte) :-
+    phrase(parsing:asm_byte(X), `$c0`),
+    assertion(X = 0xC0).
+test(asm_byte) :-
+    phrase(parsing:asm_byte(X), `$C0`),
+    assertion(X = 0xC0).
+test(asm_byte, [fail]) :-
+    phrase(parsing:asm_byte(_), `$FFFF`).  % too long
 
 test(asm_opcode) :-
     phrase(parsing:asm_opcode(rts/implied), `rts`).
@@ -66,6 +72,9 @@ test(instruction_absolute, [fail]) :-
     % for the first part of the string, `adc $c000`, but should be rejected
     % because there are still characters left.
     phrase(instruction(_/absolute), `adc $c000,x`).
+test(instruction_absolute, [fail]) :-
+    % this should not succeed; $02 should not match an absolute opcode.
+    phrase(instruction(_/absolute), `adc $02`).
 
 test(instruction_absolute_x) :-
     phrase(instruction(I), `adc $D000,X`),
@@ -91,18 +100,18 @@ test(instruction_indirect) :-
     assertion(I = jmp(0xE001)/indirect).
 
 test(instruction_indirect_x) :-
-    phrase(instruction(I), `ORA ($E100,X)`),
-    assertion(I = ora(0xE100)/indirect_x).
+    phrase(instruction(I), `ORA ($E1,X)`),
+    assertion(I = ora(0xE1)/indirect_x).
 test(instruction_indirect_x) :-
-    phrase(instruction(I), `ora ( $E001 , X )`), % allow spaces
-    assertion(I = ora(0xE001)/indirect_x).
+    phrase(instruction(I), `ora ( $E0 , X )`), % allow spaces
+    assertion(I = ora(0xE0)/indirect_x).
 
 test(instruction_indirect_y) :-
-    phrase(instruction(I), `SBC ($E200),Y`),
-    assertion(I = sbc(0xE200)/indirect_y).
+    phrase(instruction(I), `SBC ($E2),Y`),
+    assertion(I = sbc(0xE2)/indirect_y).
 test(instruction_indirect_y) :-
-    phrase(instruction(I), `sbc ( $E001 ) , Y`), % allow spaces
-    assertion(I = sbc(0xE001)/indirect_y).
+    phrase(instruction(I), `sbc ( $E0 ) , Y`), % allow spaces
+    assertion(I = sbc(0xE0)/indirect_y).
 
 test(relative) :-
     phrase(instruction(bne(0x0801)/relative), `bne $0801`).
